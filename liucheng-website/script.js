@@ -1,102 +1,89 @@
-// 计算年龄
-function calculateAge(birthday) {
-    const birthDate = new Date(birthday);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
+// 导航栏滚动效果
+window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.classList.add('navbar-scrolled');
+    } else {
+        navbar.classList.remove('navbar-scrolled');
     }
-    
-    return age;
-}
+});
 
-// 设置年龄
-document.addEventListener('DOMContentLoaded', function() {
-    // 计算并显示年龄
-    const ageElement = document.getElementById('age');
-    if (ageElement) {
-        ageElement.textContent = calculateAge('2005-05-10');
+// 返回顶部按钮
+const backToTopBtn = document.querySelector('.back-to-top');
+window.addEventListener('scroll', function() {
+    if (window.pageYOffset > 300) {
+        backToTopBtn.style.display = 'block';
+    } else {
+        backToTopBtn.style.display = 'none';
     }
+});
 
-    // 平滑滚动导航
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+backToTopBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+});
+
+// 平滑滚动
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
         });
-    });
-
-    // 表单验证
-    const contactForm = document.querySelector('#contact form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const nameInput = this.querySelector('#name');
-            const emailInput = this.querySelector('#email');
-            const messageInput = this.querySelector('#message');
-            
-            let isValid = true;
-            
-            // 验证姓名
-            if (!nameInput.value.trim()) {
-                nameInput.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                nameInput.classList.remove('is-invalid');
-            }
-            
-            // 验证邮箱
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(emailInput.value.trim())) {
-                emailInput.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                emailInput.classList.remove('is-invalid');
-            }
-            
-            // 验证留言
-            if (!messageInput.value.trim()) {
-                messageInput.classList.add('is-invalid');
-                isValid = false;
-            } else {
-                messageInput.classList.remove('is-invalid');
-            }
-            
-            if (isValid) {
-                // 模拟表单提交
-                alert('感谢您的留言！我们会尽快回复您。');
-                this.reset();
-            }
-        });
-    }
-
-    // 添加动画类
-    const sections = document.querySelectorAll('section');
-    sections.forEach(section => {
-        section.classList.add('animate__animated', 'animate__fadeInUp');
     });
 });
 
-// 滚动时显示/隐藏返回顶部按钮
-window.addEventListener('scroll', function() {
-    const backToTopBtn = document.getElementById('back-to-top');
-    if (backToTopBtn) {
-        if (window.pageYOffset > 300) {
-            backToTopBtn.classList.add('show');
-        } else {
-            backToTopBtn.classList.remove('show');
-        }
+// 技能进度条动画
+function animateProgressBars() {
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const width = bar.getAttribute('aria-valuenow');
+        bar.style.width = '0';
+        setTimeout(() => {
+            bar.style.width = width + '%';
+        }, 100);
+    });
+}
+
+// 当技能部分进入视口时触发动画
+const skillsSection = document.querySelector('#skills');
+const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+        animateProgressBars();
+        observer.unobserve(skillsSection);
     }
+}, {threshold: 0.5});
+
+if (skillsSection) {
+    observer.observe(skillsSection);
+}
+
+// 表单验证
+const contactForm = document.querySelector('#contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.querySelector('#name').value.trim();
+        const email = document.querySelector('#email').value.trim();
+        const message = document.querySelector('#message').value.trim();
+        
+        if (!name || !email || !message) {
+            alert('请填写所有必填字段');
+            return;
+        }
+        
+        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+            alert('请输入有效的电子邮件地址');
+            return;
+        }
+        
+        // 这里可以添加AJAX提交逻辑
+        alert('表单提交成功！我会尽快回复您。');
+        this.reset();
+    });
+}
+
+// 页面加载动画
+window.addEventListener('load', function() {
+    document.body.classList.add('loaded');
 });
