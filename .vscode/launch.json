@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) 启动",
+            "name": "(gdb) Windows 上的 Bash 启动",
             "type": "cppdbg",
             "request": "launch",
             "program": "输入程序名称，例如 ${workspaceFolder}/a.exe",
@@ -13,9 +13,13 @@
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "miDebuggerPath": "/path/to/gdb",
+            "externalConsole": true,
+            "pipeTransport": {
+                "debuggerPath": "/usr/bin/gdb",
+                "pipeProgram": "${env:windir}\\system32\\bash.exe",
+                "pipeArgs": ["-c"],
+                "pipeCwd": ""
+            },
             "setupCommands": [
                 {
                     "description": "为 gdb 启用整齐打印",
@@ -29,7 +33,6 @@
                 }
             ]
         }
-        
 
     ]
 }
